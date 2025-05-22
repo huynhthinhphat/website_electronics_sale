@@ -1,0 +1,74 @@
+package com.tip.b18.electronicsales.constants;
+
+public class MessageConstant {
+    public static final String SUCCESS_ACCOUNT_REGISTERED = "Đăng ký thành công";
+    public static final String SUCCESS_ACCOUNT_LOGGED_IN = "Đăng nhập thành công";
+    public static final String SUCCESS_SEND_EMAIL = "Gửi thành công! Kiểm tra email của bạn!";
+    public static final String SUCCESS_ADD = "Thêm thành công";
+    public static final String SUCCESS_UPDATE = "Cập nhật thành công";
+    public static final String SUCCESS_DELETE = "Xóa thành công";
+    public static final String SUCCESS_CHANGE = "Đổi mật khẩu thành công";
+    public static final String SUCCESS_ORDER = "Đặt hàng thành công";
+
+    public static final String ERROR_ORDER = "Đặt hàng thất bại! Vui lòng liên hệ chủ cửa hàng!";
+    public static final String ERROR_PAYOS = "Lỗi liên quan về nhà cung cấp PAYOS";
+    public static final String ERROR_CLOUDINARY = "Lỗi Cloudinary! Cập nhật thất bại!";
+    public static final String ERROR_VALUE_REQUIRED = "Giá trị bắt buộc";
+    public static final String ERROR_INVALID_CREDENTIALS = "Tên đăng nhập hoặc mật khẩu không đúng";
+    public static final String ERROR_ACCOUNT_EXISTS = "Tài khoản đã tồn tại";
+    public static final String ERROR_EMAIL_EXISTS = "Email đã tồn tại";
+    public static final String ERROR_PHONE_NUMBER_EXISTS = "Số điện thoại đã tồn tại";
+    public static final String ERROR_CATEGORY_NAME_EXISTS = "Thể loại đã tồn tại";
+    public static final String ERROR_BRAND_NAME_EXISTS = "Thương hiệu đã tồn tại";
+    public static final String ERROR_PRODUCT_EXISTS = "Sản phẩm đã tồn tại";
+    public static final String ERROR_INVALID_PASSWORD = "Mật khẩu cũ không đúng";
+    public static final String ERROR_INVALID_ACCESS_TOKEN = "Phiên đăng nhập đã hết hạn! Vui lòng đăng nhập lại!";
+    public static final String ERROR_ACCESS_DENIED = "Bạn không có quyền truy cập vào tài nguyên này";
+    public static final String ERROR_NOT_FOUND_ACCOUNT = "Không tìm thấy tài khoản";
+    public static final String ERROR_NOT_FOUND_ACCOUNT_TO_UPDATE_PASSWORD = "Không tìm thấy tài khoản để đổi mật khẩu";
+    public static final String ERROR_NOT_FOUND_ACCOUNT_TO_CHANGE_PASSWORD = "Không tìm thấy tài khoản cần đổi mật khẩu";
+    public static final String ERROR_NOT_FOUND_CATEGORY = "Không tìm thấy thể loại";
+    public static final String ERROR_NOT_FOUND_BRAND = "Không tìm thấy thương hiệu";
+    public static final String ERROR_NOT_FOUND_PRODUCT = "Không tìm thấy sản phẩm";
+    public static final String ERROR_NOT_FOUND_PRODUCT_AND_COLOR = "Sản phẩm %s không có màu %s";
+    public static final String ERROR_NOT_FOUND_ORDER = "Không tìm thấy hóa đơn";
+    public static final String ERROR_NOT_FOUND_CART = "Không tìm thấy giỏ hàng";
+    public static final String ERROR_NOT_FOUND_PRODUCTS_IN_CART = "Giỏ hàng không có sản phẩm";
+    public static final String ERROR_NOT_FOUND_COLOR = "Không tìm thấy màu %s";
+    public static final String ERROR_ACCOUNT_HAS_ORDERS = "Tài khoản đã phát sinh mua hàng nên không thể xóa";
+    public static final String ERROR_CATEGORY_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thể loại";
+    public static final String ERROR_BRAND_HAS_PRODUCTS = "Xóa các sản phẩm liên quan trước khi xóa thương hiệu";
+    public static final String ERROR_INSUFFICIENT_STOCK = "Số lượng hàng tồn kho của sản phẩm %s không đủ";
+    public static final String ERROR_UPDATE_ORDER = "Không thể cập nhật đơn hàng! Đơn hàng %s";
+    public static final String ERROR_NOT_FOUND_EMAIL_FROM_SERVER = "Goolge không tìm thấy gmail!";
+    public static final String ERROR_NO_GMAIL_LINKED = "Tài khoản của bạn không có gmail liên kết";
+    public static final String ERROR_NOT_FOUND_USERNAME_FROM_CLIENT = "Không tìm thấy tài khoản đã lưu tại client!";
+    public static final String ERROR_INVALID_OTP = "Mã OTP không hợp lệ";
+
+    public static final String TITLE_FORGOT_PASSWORD = "Quên mật khẩu";
+
+
+    public static final String MISSING_ORDER_CODE = "Không tìm thấy mã hóa đơn trong dữ liệu";
+
+    public static final String VALID_OTP = "Mã OTP hợp lệ";
+
+    public static final String INVALID_ORDER_CODE_OF_DATA = "Mã hóa đơn từ Payload không hợp lệ";
+    public static final String INVALID_DATA_OF_PAYLOAD = "Dữ liệu đơn hàng không hợp lệ";
+    public static final String INVALID_PAYLOAD = "Payload không hợp lệ";
+    public static final String INVALID_DATE_FORMAT_MESSAGE = "Ngày tháng không hợp lệ. Định dạng hợp lệ: yyyy-M-d hoặc yyyy-MM-dd";
+    public static final String INVALID_PARAM = "%s có giá trị không hợp lệ";
+    public static final String INVALID_FIELD_FORMAT = "Trường %s không đúng kiểu dữ liệu";
+    public static final String INVALID_JSON_FORMAT = "Dữ liệu JSON không hợp lệ";
+    public static final String INVALID_LENGTH_PHONE_NUMBER = "Số điện thoại yêu cầu độ dài tối đa 10 chữ số";
+    public static final String INVALID_NEW_PASSWORD = "Mật khẩu mới không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_OLD_PASSWORD = "Mật khẩu cũ không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_USERNAME = "Tài khoản không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_PASSWORD = "Mật khẩu không được chứa khoảng trắng hoặc rỗng";
+    public static final String INVALID_EMAIL = "Email không đúng định dạng";
+    public static final String INVALID_EMPTY_EMAIL = "Email không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_EMPTY_NAME = "Họ và tên không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_EMPTY_ADDRESS = "Địa chỉ không được bỏ trống hoặc chứa chuỗi rỗng";
+    public static final String INVALID_CHARACTER_PHONE_NUMBER = "Số điện thoại không được chứa chữ cái, bỏ trống, chứa chuỗi rỗng, chứa kí tự khoảng cách";
+    public static final String INVALID_PHONE_PREFIX = "Số điện thoại không thuộc bất kỳ nhà mạng nào ở Việt Nam";
+    public static final String INVALID_DATE_AFTER_TODAY = "Thời gian chọn không được vượt quá ngày hiện tại";
+}

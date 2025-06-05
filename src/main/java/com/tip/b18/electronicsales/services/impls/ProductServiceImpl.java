@@ -3,24 +3,29 @@ package com.tip.b18.electronicsales.services.impls;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.*;
+import com.tip.b18.electronicsales.entities.base.BaseIdEntity;
 import com.tip.b18.electronicsales.exceptions.AlreadyExistsException;
+import com.tip.b18.electronicsales.exceptions.CloudinaryDeleteException;
 import com.tip.b18.electronicsales.exceptions.InsufficientStockException;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
 import com.tip.b18.electronicsales.mappers.ProductMapper;
 import com.tip.b18.electronicsales.mappers.TupleMapper;
 import com.tip.b18.electronicsales.repositories.*;
 import com.tip.b18.electronicsales.services.*;
-import com.tip.b18.electronicsales.utils.BigDecimalUtil;
-import com.tip.b18.electronicsales.utils.CompareUtil;
-import com.tip.b18.electronicsales.utils.SecurityUtil;
+import com.tip.b18.electronicsales.utils.*;
 import jakarta.persistence.Tuple;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,10 +41,12 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final CategoryService categoryService;
     private final BrandService brandService;
+    private final CloudinaryService cloudinaryService;
+    private final @Lazy OrderDetailService orderDetailService;
 
     @Override
-    public CustomPage<ProductDTO> viewProducts(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy) {
-        Page<ProductDTO> products = productCriteria.searchProductsByConditions(search, page, limit, categoryId, brandId, orderBy);
+    public CustomPage<ProductDTO> viewProducts(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy, String startDay, String endDay, String star) {
+        Page<ProductDTO> products = productCriteria.searchProductsByConditions(search, page, limit, categoryId, brandId, orderBy, LocalDateTimeUtil.parseStartDay(startDay), LocalDateTimeUtil.parseEndDay(endDay), star);
 
         PageInfoDTO pageInfoDTO = new PageInfoDTO();
         pageInfoDTO.setTotalPages(products.getTotalPages());
@@ -65,13 +72,18 @@ public class ProductServiceImpl implements ProductService {
         List<String> images = tupleMapper.mapToList(tuples, "image");
         List<String> colors = tupleMapper.mapToList(tuples, "color");
 
+        Double star = tuple.get("star", Double.class);
+        String formatted = "0";
+        if(star != null){
+            DecimalFormat df = new DecimalFormat("#0.0");
+            formatted = df.format(star);
+        }
+
         ProductDTO.ProductDTOBuilder builder = ProductDTO.builder();
         builder.id(product.getId())
                 .sku(product.getSku())
                 .name(product.getName())
                 .stock(product.getStock())
-                .category(product.getCategory().getName())
-                .brand(product.getBrand().getName())
                 .price(product.getPrice())
                 .warranty(product.getWarranty())
                 .discount(product.getDiscount())
@@ -79,10 +91,16 @@ public class ProductServiceImpl implements ProductService {
                 .description(product.getDescription())
                 .mainImageUrl(product.getMainImageUrl())
                 .colors(colors)
-                .images(images);
+                .images(images)
+                .star(Double.parseDouble(formatted));
         if(!SecurityUtil.isAdminRole()){
             Long quantitySold = tuple.get("quantitySold", Long.class);
-            builder.quantitySold(quantitySold != null ? quantitySold.intValue() : 0);
+            builder.quantitySold(quantitySold != null ? quantitySold.intValue() : 0)
+                    .category(product.getCategory().getName())
+                    .brand(product.getBrand().getName());
+        }else{
+            builder.category(product.getCategory().getId().toString())
+                    .brand(product.getBrand().getId().toString());
         }
         return builder.build();
     }
@@ -137,7 +155,6 @@ public class ProductServiceImpl implements ProductService {
             if(productRepository.existsBySkuAndIsDeleted(productDTO.getSku(), false)){
                 throw new AlreadyExistsException(MessageConstant.ERROR_PRODUCT_EXISTS);
             }
-
             product.setSku(productDTO.getSku());
             isChange = true;
         }
@@ -177,6 +194,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         if(!CompareUtil.compare(productDTO.getMainImageUrl(), product.getMainImageUrl())){
+            try {
+                cloudinaryService.deleteImage(ImageUtil.getPublicIdFromUrl(product.getMainImageUrl()));
+            } catch (Exception e) {
+                throw new CloudinaryDeleteException(MessageConstant.ERROR_CLOUDINARY);
+            }
             product.setMainImageUrl(productDTO.getMainImageUrl());
             isChange = true;
         }
@@ -221,7 +243,7 @@ public class ProductServiceImpl implements ProductService {
 
         Map<UUID, Integer> map = orderDetailDTOList
                 .stream()
-                .collect(Collectors.toMap(OrderDetailDTO::getId, OrderDetailDTO::getQuantity));
+                .collect(Collectors.toMap(OrderDetailDTO::getId, OrderDetailDTO::getQuantity, Integer::sum));
 
         List<Product> productListToUpdate = products
                 .stream()
@@ -284,5 +306,53 @@ public class ProductServiceImpl implements ProductService {
                 existingProduct.setStock(existingProduct.getStock() + orderDetail.getQuantity());
             }
         }
+    }
+
+    @Override
+    public CustomPage<ProductDTO> viewProductsAreDeleted() {
+        Pageable pageable = Pageable.unpaged();
+        Page<Product> products = productRepository.findAllByIsDeleted(true, pageable);
+        return new CustomPage<>(
+                productMapper.toProductDTOS(products),
+                new PageInfoDTO(products.getTotalElements(), products.getTotalPages()));
+    }
+
+    @Override
+    public void restoreProduct(UUID id) {
+        Product product = productRepository.findByIdAndIsDeleted(id, true);
+        if(product == null){
+            throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
+        }
+
+        product.setDeleted(false);
+        product.setDeletedAt(null);
+        productRepository.save(product);
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 0 * * *")
+    public void deleteProductsPermanently() {
+        LocalDate targetDate = LocalDate.now().minusDays(90);
+        LocalDateTime startOfTargetDate = targetDate.atStartOfDay();
+        LocalDateTime endOfTargetDate = targetDate.atTime(LocalTime.MAX);
+        List<Tuple> products = productRepository.findAllByIsDeleted(startOfTargetDate, endOfTargetDate);
+
+        List<Product> productList = new ArrayList<>();
+        for(Tuple tuple : products){
+            Long quantity = tuple.get(1, Long.class);
+
+            if(quantity == 0){
+                Product product = tuple.get(0, Product.class);
+                productList.add(product);
+            }
+        }
+
+        productRepository.deleteAll(productList);
+        colorService.deleteUnusedColors();
+    }
+
+    @Override
+    public Page<ProductDTO> findAllByConditions(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy, String startDate, String endDate, String star) {
+        return productCriteria.searchProductsByConditions(search, page, limit, categoryId, brandId, orderBy, LocalDateTimeUtil.parseStartDay(startDate), LocalDateTimeUtil.parseEndDay(endDate), star);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,9 +25,14 @@ public class ProductDTO {
     private BigDecimal discount;
     private BigDecimal discountPrice;
     private Integer quantitySold;
+    private Double rate;
     private String mainImageUrl;
     private Integer warranty;
     private String description;
     private List<String> colors;
     private List<String> images;
+    private LocalDateTime deletedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private Double star;
 }

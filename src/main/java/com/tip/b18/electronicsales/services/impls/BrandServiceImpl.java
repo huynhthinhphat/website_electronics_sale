@@ -2,7 +2,6 @@ package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.BrandDTO;
-import com.tip.b18.electronicsales.dto.BrandsDTO;
 import com.tip.b18.electronicsales.dto.CustomPage;
 import com.tip.b18.electronicsales.dto.PageInfoDTO;
 import com.tip.b18.electronicsales.entities.Brand;
@@ -29,7 +28,7 @@ public class BrandServiceImpl implements BrandService {
     private final BrandMapper brandMapper;
 
     @Override
-    public void addBrand(BrandDTO brandDTO) {
+    public BrandDTO addBrand(BrandDTO brandDTO) {
         if(brandRepository.existsByName(brandDTO.getName())){
             throw new AlreadyExistsException(MessageConstant.ERROR_BRAND_NAME_EXISTS);
         }
@@ -38,12 +37,12 @@ public class BrandServiceImpl implements BrandService {
         brand.setName(brandDTO.getName());
         brand.setDescription(brandDTO.getDescription());
 
-        brandRepository.save(brand);
+        return brandMapper.toBrandDTO(brandRepository.save(brand));
     }
 
     @Override
-    public CustomPage<BrandsDTO> viewBrands(String search, int page, int limit) {
-        CustomPage<BrandsDTO> brandsDTO = new CustomPage<>();
+    public CustomPage<BrandDTO> viewBrands(String search, int page, int limit) {
+        CustomPage<BrandDTO> brandsDTO = new CustomPage<>();
         Pageable pageable = Pageable.unpaged();;
         Page<Brand> brands;
 

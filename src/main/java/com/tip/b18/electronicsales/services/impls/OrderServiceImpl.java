@@ -27,7 +27,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Service
@@ -43,20 +45,32 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemService cartItemService;
 
     @Override
-    public CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery) {
-        Pageable pageable = SecurityUtil.isAdminRole() ? PageRequest.of(page, limit) : Pageable.unpaged();
-        UUID accountId = SecurityUtil.isAdminRole() ? null : SecurityUtil.getAuthenticatedUserId();
+    public CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery, String startDay, String endDay) {
+        boolean isAdmin = SecurityUtil.isAdminRole();
 
-        Page<Order> orderList = orderRepository.findAllByConditions(
-                search, accountId, status, paymentMethod, delivery, pageable);
+        Pageable pageable = isAdmin ? PageRequest.of(page, limit) : Pageable.unpaged();
+
+        Page<Order> orderList = !isAdmin
+                ? orderRepository.findAllByConditions(search, SecurityUtil.getAuthenticatedUserId(), status, Status.WAITING_FOR_PAYMENT, paymentMethod, delivery, LocalDateTimeUtil.parseStartDay(startDay), LocalDateTimeUtil.parseEndDay(endDay), pageable)
+                : orderRepository.findAllByConditions(search, null, status, null, paymentMethod, delivery, LocalDateTimeUtil.parseStartDay(startDay), LocalDateTimeUtil.parseEndDay(endDay), pageable);
 
         PageInfoDTO pageInfoDTO = new PageInfoDTO(orderList.getTotalElements(), orderList.getTotalPages());
+        List<UUID> uuidList = isAdmin ? null : orderList.stream().map(Order::getId).toList();
 
-        List<UUID> uuidList = SecurityUtil.isAdminRole() ? null : orderList.stream().map(Order::getId).toList();
-
-        return SecurityUtil.isAdminRole()
+        return isAdmin
                 ? new CustomPage<>(orderMapper.toOrderDTOListByAdmin(orderList), pageInfoDTO)
                 : new CustomPage<>(orderMapper.toOrderDTOListByUser(orderList, orderDetailService.findAllByOrderId(uuidList)), pageInfoDTO);
+    }
+
+    @Override
+    public Page<Order> getOrdersToExport(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery, String startDay, String endDay){
+        return orderRepository.findAllByConditions(
+                search, null, status,null, paymentMethod, delivery, LocalDateTimeUtil.parseStartDay(startDay), LocalDateTimeUtil.parseEndDay(endDay), PageRequest.of(page, limit));
+    }
+
+    @Override
+    public Order findByOrderId(UUID uuid) {
+        return orderRepository.findById(uuid).orElseThrow(()-> new NotFoundException(MessageConstant.INVALID_ORDER_DETAIL));
     }
 
     @Override
@@ -78,7 +92,6 @@ public class OrderServiceImpl implements OrderService {
         UUID accountId = SecurityUtil.getAuthenticatedUserId();
         String orderCode = orderDTO.getOrderCode() == null ? OrderUtil.generateOrderCode() : orderDTO.getOrderCode();
 
-        System.out.println("orderDTO.getItems(): " + orderDTO.getItems().toString());
         productService.updateStockProducts(orderDTO.getItems(), false);
 
         Order order = orderRepository.save(
@@ -112,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = optionalOrder.orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ORDER));
 
-        if(order.getStatus().equals(Status.COMPLETED) || order.getStatus().equals(Status.CANCELED)){
+        if(order.getStatus().equals(Status.CANCELED)){
             throw new IllegalStateException(String.format(MessageConstant.ERROR_UPDATE_ORDER, order.getStatus().getDisplayName()));
         }
 
@@ -122,9 +135,10 @@ public class OrderServiceImpl implements OrderService {
             }
             order.setStatus(orderDTO.getStatus());
         }else{
-            if(!order.getStatus().equals(Status.PENDING) && !order.getStatus().equals(Status.WAITING_FOR_PAYMENT)){
+            if(!order.getStatus().equals(Status.SHIPPING) && !order.getStatus().equals(Status.PENDING) && !order.getStatus().equals(Status.COMPLETED) && !order.getStatus().equals(Status.WAITING_FOR_PAYMENT)){
                 throw new IllegalStateException(String.format(MessageConstant.ERROR_UPDATE_ORDER, order.getStatus().getDisplayName()));
             }
+
             if(!CompareUtil.compare(orderDTO.getFullName(), order.getFullName())){
                 order.setFullName(orderDTO.getFullName());
             }
@@ -137,9 +151,12 @@ public class OrderServiceImpl implements OrderService {
                 order.setAddress(orderDTO.getAddress());
             }
 
-            if(!CompareUtil.compare(orderDTO.getStatus(), order.getStatus())){
+            if((orderDTO.getStatus().equals(Status.COMPLETED) || orderDTO.getStatus().equals(Status.RETURNING))&& order.getStatus().equals(Status.SHIPPING)){
+                order.setStatus(orderDTO.getStatus());
+            }else if(orderDTO.getStatus().equals(Status.CANCELED) && order.getStatus().equals(Status.PENDING)){
                 order.setStatus(Status.CANCELED);
             }
+
             order.setPaymentDeadline(null);
             order.setNote(orderDTO.getNote());
         }
@@ -238,8 +255,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean isPaymentDeadlinePassed(Order order, LocalDateTime now) {
-        Duration duration = Duration.between(order.getPaymentDeadline(), now);
-        return duration.toMinutes() > (long) 15;
+        LocalDateTime deadline = order.getPaymentDeadline();
+
+        if (deadline == null || now == null) {
+            return false;
+        }
+
+        Duration duration = Duration.between(deadline, now);
+        return duration.toMinutes() > 15;
     }
 
     @Override
@@ -247,6 +270,7 @@ public class OrderServiceImpl implements OrderService {
     @Scheduled(cron = "0 0 0 * * *")
     public void scheduleOrderStatusCheckAt0Hour() {
         scheduleOrderStatusCheck();
+        updateOrderStatusAfterShipped();
     }
 
     @Override
@@ -254,5 +278,20 @@ public class OrderServiceImpl implements OrderService {
     @Scheduled(cron = "0 0 12 * * *")
     public void scheduleOrderStatusCheckAt12Hour() {
         scheduleOrderStatusCheck();
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderStatusAfterShipped() {
+        LocalDate targetDate = LocalDate.now().minusDays(30);
+        LocalDateTime startOfTargetDate = targetDate.atStartOfDay();
+        LocalDateTime endOfTargetDate = targetDate.atTime(LocalTime.MAX);
+        List<Order> orderList = orderRepository.findByStatusAndDate(Status.SHIPPING, startOfTargetDate, endOfTargetDate);
+
+        for(Order order : orderList){
+            order.setStatus(Status.COMPLETED);
+        }
+
+        orderRepository.saveAll(orderList);
     }
 }

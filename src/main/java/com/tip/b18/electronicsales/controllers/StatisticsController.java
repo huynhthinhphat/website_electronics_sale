@@ -23,38 +23,30 @@ public class StatisticsController {
     private final StatisticService statisticService;
 
     @GetMapping
-    public ResponseDTO<DailySummaryDTO> getDailySummary(){
+    public ResponseDTO<DailySummaryDTO> getDailySummary() {
         ResponseDTO<DailySummaryDTO> responseDTO = new ResponseDTO<>();
-
         responseDTO.setStatus("success");
         responseDTO.setData((statisticService.getDailySummary()));
-
         return responseDTO;
     }
 
     @GetMapping("/top-products")
     public ResponseDTO<CustomList<ProductDTO>> getTopProducts(@RequestParam(name = "limit", defaultValue = "-1", required = false) int limit,
                                                               @RequestParam(name = "startDay", required = false) String startDay,
-                                                              @RequestParam(name = "endDay", required = false) String endDay){
+                                                              @RequestParam(name = "endDay", required = false) String endDay) {
         ResponseDTO<CustomList<ProductDTO>> responseDTO = new ResponseDTO<>();
-
         responseDTO.setStatus("success");
         responseDTO.setData(statisticService.getTopProducts(limit, startDay, endDay));
-
         return responseDTO;
     }
 
     @GetMapping("/revenue")
     public ResponseDTO<CustomList<DailyRevenueDTO>> getDailyRevenue(@RequestParam(name = "limit", defaultValue = "-1", required = false) int limit,
-                                                        @RequestParam(name = "startDay", required = false) String startDay,
-                                                        @RequestParam(name = "endDay", required = false) String endDay){
+                                                                    @RequestParam(name = "startDay", required = false) String startDay,
+                                                                    @RequestParam(name = "endDay", required = false) String endDay) {
         ResponseDTO<CustomList<DailyRevenueDTO>> responseDTO = new ResponseDTO<>();
-
         responseDTO.setStatus("success");
         responseDTO.setData(statisticService.getDailyRevenue(limit, startDay, endDay));
-
         return responseDTO;
     }
-
-
 }

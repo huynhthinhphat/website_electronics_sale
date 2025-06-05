@@ -8,9 +8,7 @@ public class MessageConstant {
     public static final String SUCCESS_UPDATE = "Cập nhật thành công";
     public static final String SUCCESS_DELETE = "Xóa thành công";
     public static final String SUCCESS_CHANGE = "Đổi mật khẩu thành công";
-    public static final String SUCCESS_ORDER = "Đặt hàng thành công";
-
-    public static final String ERROR_ORDER = "Đặt hàng thất bại! Vui lòng liên hệ chủ cửa hàng!";
+    public static final String SUCCESS_RESTORE = "Khôi phục thành công";
     public static final String ERROR_PAYOS = "Lỗi liên quan về nhà cung cấp PAYOS";
     public static final String ERROR_CLOUDINARY = "Lỗi Cloudinary! Cập nhật thất bại!";
     public static final String ERROR_VALUE_REQUIRED = "Giá trị bắt buộc";
@@ -44,14 +42,10 @@ public class MessageConstant {
     public static final String ERROR_NO_GMAIL_LINKED = "Tài khoản của bạn không có gmail liên kết";
     public static final String ERROR_NOT_FOUND_USERNAME_FROM_CLIENT = "Không tìm thấy tài khoản đã lưu tại client!";
     public static final String ERROR_INVALID_OTP = "Mã OTP không hợp lệ";
-
     public static final String TITLE_FORGOT_PASSWORD = "Quên mật khẩu";
-
-
     public static final String MISSING_ORDER_CODE = "Không tìm thấy mã hóa đơn trong dữ liệu";
-
     public static final String VALID_OTP = "Mã OTP hợp lệ";
-
+    public static final String INVALID_REVIEW = "Bình luận không tồn tại";
     public static final String INVALID_ORDER_CODE_OF_DATA = "Mã hóa đơn từ Payload không hợp lệ";
     public static final String INVALID_DATA_OF_PAYLOAD = "Dữ liệu đơn hàng không hợp lệ";
     public static final String INVALID_PAYLOAD = "Payload không hợp lệ";
@@ -71,4 +65,5 @@ public class MessageConstant {
     public static final String INVALID_CHARACTER_PHONE_NUMBER = "Số điện thoại không được chứa chữ cái, bỏ trống, chứa chuỗi rỗng, chứa kí tự khoảng cách";
     public static final String INVALID_PHONE_PREFIX = "Số điện thoại không thuộc bất kỳ nhà mạng nào ở Việt Nam";
     public static final String INVALID_DATE_AFTER_TODAY = "Thời gian chọn không được vượt quá ngày hiện tại";
+    public static final String INVALID_ORDER_DETAIL = "Đơn hàng hiện tại không hợp lệ! Vui lòng thử lại sau!";
 }

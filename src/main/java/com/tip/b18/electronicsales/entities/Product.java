@@ -1,13 +1,11 @@
 package com.tip.b18.electronicsales.entities;
 
 import com.tip.b18.electronicsales.entities.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -49,4 +47,10 @@ public class Product extends BaseEntity {
     private boolean isDeleted;
 
     private LocalDateTime deletedAt;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<ProductColor> productColors;
 }

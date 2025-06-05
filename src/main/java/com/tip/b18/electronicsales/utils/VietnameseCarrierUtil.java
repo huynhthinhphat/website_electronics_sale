@@ -7,6 +7,8 @@ import com.tip.b18.electronicsales.exceptions.InvalidValueException;
 import java.util.Arrays;
 
 public class VietnameseCarrierUtil {
+    private VietnameseCarrierUtil(){}
+
     public static void checkPhoneNumber(String phoneNumber) {
         if(phoneNumber.trim().contains(" ") || !containsOnlyDigits(phoneNumber)){
             throw new InvalidValueException(MessageConstant.INVALID_CHARACTER_PHONE_NUMBER);

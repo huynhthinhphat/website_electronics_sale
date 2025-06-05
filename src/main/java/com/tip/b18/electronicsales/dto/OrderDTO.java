@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ public class OrderDTO {
     private BigDecimal totalPrice;
     private Integer totalQuantity;
     private boolean isFromCart;
-    private String fromEstimateDate;
-    private String toEstimateDate;
+    private LocalDateTime fromEstimateDate;
+    private LocalDateTime toEstimateDate;
     private List<OrderDetailDTO> items;
 }

@@ -1,8 +1,14 @@
 package com.tip.b18.electronicsales.dto;
 
-import com.tip.b18.electronicsales.dto.base.BaseBrandDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
-public class BrandDTO extends BaseBrandDTO {
+public class BrandDTO {
+    private UUID id;
+    private String name;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String description;
 }

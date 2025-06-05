@@ -22,25 +22,21 @@ public class BrandController {
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ResponseDTO<BrandDTO>> addBrand(@RequestBody BrandDTO brandDTO){
-        brandService.addBrand(brandDTO);
-
+        BrandDTO dto = brandService.addBrand(brandDTO);
         ResponseDTO<BrandDTO> responseDTO = new ResponseDTO<>();
-
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ADD);
-
+        responseDTO.setData(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @GetMapping
-    public ResponseDTO<CustomPage<BrandsDTO>> viewBrands(@RequestParam(name = "search", defaultValue = "") String search,
+    public ResponseDTO<CustomPage<BrandDTO>> viewBrands(@RequestParam(name = "search", defaultValue = "") String search,
                                                              @RequestParam(name = "page", defaultValue = "0") int page,
                                                              @RequestParam(name = "limit", defaultValue = "-1") int limit){
-        ResponseDTO<CustomPage<BrandsDTO>> responseDTO = new ResponseDTO<>();
-
+        ResponseDTO<CustomPage<BrandDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(brandService.viewBrands(search, page, limit));
-
         return responseDTO;
     }
 
@@ -48,11 +44,9 @@ public class BrandController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseDTO<?> deleteBrand(@RequestParam @Valid UUID id){
         brandService.deleteBrand(id);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);
-
         return responseDTO;
     }
 
@@ -60,11 +54,9 @@ public class BrandController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseDTO<?> updateBrand(@RequestParam @Valid UUID id, @RequestBody BrandDTO brandDTO){
         brandService.updateBrand(id, brandDTO);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
-
         return responseDTO;
     }
 }

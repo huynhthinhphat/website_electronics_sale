@@ -11,12 +11,10 @@ import com.tip.b18.electronicsales.repositories.OrderDetailRepository;
 import com.tip.b18.electronicsales.services.OrderDetailService;
 import com.tip.b18.electronicsales.services.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +22,12 @@ import java.util.stream.Collectors;
 public class OrderDetailServiceImpl implements OrderDetailService {
     private final OrderDetailRepository orderDetailRepository;
     private final OrderDetailMapper orderDetailMapper;
-    private final ProductService productService;
+    private final @Lazy ProductService productService;
+
+    @Override
+    public Optional<OrderDetail> findOrderDetailById(UUID id) {
+        return orderDetailRepository.findById(id);
+    }
 
     @Override
     public List<OrderDetailDTO> findAllByOrderId(List<UUID> uuidList) {

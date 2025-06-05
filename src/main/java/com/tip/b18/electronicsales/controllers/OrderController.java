@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
 @RestController
@@ -37,11 +36,12 @@ public class OrderController {
                                                         @Parameter(description = "Chọn loại giao dịch", schema = @Schema(implementation = PaymentMethod.class))
                                                         @RequestParam(name = "transaction", defaultValue = "") PaymentMethod transaction,
                                                         @Parameter(description = "Chọn loại vận chuyển", schema = @Schema(implementation = Delivery.class))
-                                                        @RequestParam(name = "delivery", defaultValue = "") Delivery delivery){
+                                                        @RequestParam(name = "delivery", defaultValue = "") Delivery delivery,
+                                                        @RequestParam(name = "startDay", required = false) String startDay,
+                                                        @RequestParam(name = "endDay", required = false) String endDay){
         ResponseDTO<CustomPage<OrderDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
-        responseDTO.setData(orderService.viewOrders(search, page, limit, status, transaction, delivery));
-
+        responseDTO.setData(orderService.viewOrders(search, page, limit, status, transaction, delivery, startDay, endDay));
         return responseDTO;
     }
 
@@ -51,7 +51,6 @@ public class OrderController {
         ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(orderService.viewOrderDetails(id));
-
         return responseDTO;
     }
 
@@ -61,7 +60,6 @@ public class OrderController {
         ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(orderService.createOrder(orderDTO));
-
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
@@ -69,11 +67,9 @@ public class OrderController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public ResponseDTO<OrderDTO> updateOrder(@RequestBody @Valid OrderDTO orderDTO){
         orderService.updateOrder(orderDTO);
-
         ResponseDTO<OrderDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
-
         return responseDTO;
     }
 }

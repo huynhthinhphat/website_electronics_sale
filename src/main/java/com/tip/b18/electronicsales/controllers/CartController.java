@@ -36,36 +36,29 @@ public class CartController {
     @PostMapping
     public ResponseEntity<ResponseDTO<CartDTO>> addItemToCart(@RequestBody @Valid CartItemDTO cartItemDTO){
         cartService.addItemToCart(cartItemDTO);
-
         ResponseDTO<CartDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ADD);
         responseDTO.setData(cartService.getTotalQuantityItem());
-
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @DeleteMapping
     public ResponseDTO<CartDTO> deleteItemsInCart(@RequestBody @Valid CustomList<UUID> cartItemIdList){
         cartService.deleteItemsInCart(cartItemIdList);
-
         ResponseDTO<CartDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);
         responseDTO.setData(cartService.getTotalQuantityItem());
-
         return responseDTO;
     }
 
-//    @RequestMapping(method = {RequestMethod.POST, RequestMethod.PATCH})
     @PatchMapping
     public ResponseDTO<?> updateItemsInCart(@RequestBody @Valid List<CartItemDTO> cartItemDTO){
         cartService.updateItemsInCart(cartItemDTO);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
-
         return responseDTO;
     }
 }

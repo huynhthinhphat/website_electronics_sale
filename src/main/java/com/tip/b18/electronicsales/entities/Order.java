@@ -55,10 +55,10 @@ public class Order extends BaseIdEntity {
     private String note;
 
     @Column(name = "fromEstimateDate")
-    private String fromEstimateDate;
+    private LocalDateTime fromEstimateDate;
 
     @Column(name = "toEstimateDate")
-    private String toEstimateDate;
+    private LocalDateTime toEstimateDate;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

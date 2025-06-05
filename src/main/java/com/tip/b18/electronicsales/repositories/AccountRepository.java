@@ -16,10 +16,8 @@ import java.util.UUID;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, UUID>{
     Optional<Account> findByUserName(String userName);
-
-    @Query("SELECT a FROM Account a WHERE a.userName LIKE CONCAT('%', :search, '%') OR a.phoneNumber LIKE CONCAT('%', :search, '%')")
+    @Query("SELECT a FROM Account a WHERE a.userName LIKE CONCAT('%', :search, '%') OR a.phoneNumber LIKE CONCAT('%', :search, '%') ORDER BY a.createdAt DESC")
     Page<Account> findByUserNameOrPhoneNumber(@Param("search") String search, Pageable pageable);
-
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
     @Query("SELECT COUNT(a) FROM Account a WHERE a.createdAt > :startDay AND a.createdAt < :endDay")

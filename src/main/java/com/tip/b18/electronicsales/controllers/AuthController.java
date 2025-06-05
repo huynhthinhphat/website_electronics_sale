@@ -5,21 +5,15 @@ import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.services.AccountService;
 import com.tip.b18.electronicsales.services.GoogleAuthService;
 import com.tip.b18.electronicsales.services.JwtService;
-import com.tip.b18.electronicsales.services.OrderService;
 import com.tip.b18.electronicsales.utils.CookieUtil;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import com.tip.b18.electronicsales.utils.SecurityUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,14 +22,12 @@ public class AuthController {
     private final @Lazy AccountService accountService;
     private final JwtService jwtService;
     private final GoogleAuthService googleAuthService;
-    private final OrderService orderService;
 
     @PostMapping("/login")
     public ResponseDTO<AccountDTO> loginAccount(@RequestBody @Valid AccountLoginDTO accountLoginDTO, HttpServletResponse response){
         AccountDTO account = accountService.loginAccount(accountLoginDTO);
-
-        CookieUtil.addJwtToCookie(response, jwtService.generateToken(account.getUserName(), account.getId(), account.isRole()));
-
+        String token = jwtService.generateToken(account.getUserName(), account.getId(), account.isRole());
+        CookieUtil.addJwtToCookie(response, token);
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ACCOUNT_LOGGED_IN);
@@ -46,7 +38,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<ResponseDTO<AccountDTO>> registerAccount(@RequestBody @Valid AccountRegisterDTO accountRegisterDTO){
         accountService.registerAccount(accountRegisterDTO);
-
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ACCOUNT_REGISTERED);
@@ -56,25 +47,20 @@ public class AuthController {
     @PostMapping("/login-google")
     public ResponseDTO<?> loginGoogle(@RequestHeader("Authorization") String accessToken, HttpServletResponse response) {
         AccountDTO account = googleAuthService.authenticateWithGoogle(accessToken.replace("Bearer ", ""));
-
         CookieUtil.addJwtToCookie(response, jwtService.generateToken(account.getUserName(), account.getId(), account.isRole()));
-
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ACCOUNT_LOGGED_IN);
         responseDTO.setData(account);
-
         return responseDTO;
     }
 
     @PutMapping("update-password")
     public ResponseDTO<?> changePasswordAccount(@RequestBody UpdatePasswordDTO updatePasswordDTO){
         accountService.changePasswordAfterVerifyOTP(updatePasswordDTO);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_CHANGE);
-
         return responseDTO;
     }
 
@@ -84,8 +70,8 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/test")
-    public void test(){
-        orderService.scheduleOrderStatusCheck();
+    @GetMapping
+    public ResponseEntity<?> checkRole(){
+        return ResponseEntity.ok(SecurityUtil.isAdminRole());
     }
 }

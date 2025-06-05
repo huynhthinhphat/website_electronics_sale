@@ -13,5 +13,4 @@ public interface ImageRepository extends JpaRepository<Image, UUID> {
     @Query("SELECT i.url FROM Image i WHERE i.product.id = :id")
     List<String> findAllByProductId(UUID id);
     void deleteAllByProductIdAndUrlIn(UUID id, List<String> urls);
-    void deleteAllByProductIdIn(List<UUID> ids);
 }

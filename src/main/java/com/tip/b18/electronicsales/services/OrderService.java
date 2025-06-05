@@ -9,12 +9,14 @@ import com.tip.b18.electronicsales.entities.Order;
 import com.tip.b18.electronicsales.enums.Delivery;
 import com.tip.b18.electronicsales.enums.PaymentMethod;
 import com.tip.b18.electronicsales.enums.Status;
+import org.springframework.data.domain.Page;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
 public interface OrderService {
-    CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery);
+    CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery, String startDay, String endDay);
     OrderDTO viewOrderDetails(UUID id);
     OrderDTO createOrder(OrderDTO orderDTO);
     void updateOrder(OrderDTO orderDTO);
@@ -26,4 +28,7 @@ public interface OrderService {
     void scheduleOrderStatusCheck();
     void scheduleOrderStatusCheckAt0Hour();
     void scheduleOrderStatusCheckAt12Hour();
+    void updateOrderStatusAfterShipped();
+    Page<Order> getOrdersToExport(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery, String startDay, String endDay);
+    Order findByOrderId(UUID uuid);
 }

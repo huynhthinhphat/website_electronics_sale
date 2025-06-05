@@ -35,24 +35,6 @@ public class ProductColorServiceImpl implements ProductColorService {
     }
 
     @Override
-    public List<Color> getColorsByProductColors(List<UUID> productIdList) {
-        List<Tuple> tuples = productColorRepository.findAllByProductIds(productIdList);
-        List<Color> colorList = new ArrayList<>();
-        List<ProductColor> productColorList = new ArrayList<>();
-        for (Tuple tuple : tuples){
-            ProductColor productColor = tuple.get("productColor", ProductColor.class);
-            productColorList.add(productColor);
-
-            if((Long)tuple.get(1) < 2){
-                Color color = productColor.getColor();
-                colorList.add(color);
-            }
-        }
-        deleteProductColors(productColorList);
-        return colorList;
-    }
-
-    @Override
     public void deleteProductColors(List<ProductColor> productColorList) {
         productColorRepository.deleteAll(productColorList);
     }

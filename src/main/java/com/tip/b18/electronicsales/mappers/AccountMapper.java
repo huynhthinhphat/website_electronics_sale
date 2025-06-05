@@ -15,7 +15,6 @@ public interface AccountMapper {
     AccountDTO toDTO(Account account);
     default AccountDTO toDTO(Account account, int totalQuantity){
         AccountDTO.AccountDTOBuilder accountDTO = AccountDTO.builder();
-
         accountDTO.id( account.getId() );
         accountDTO.fullName( account.getFullName() );
         accountDTO.userName( account.getUserName() );
@@ -26,20 +25,10 @@ public interface AccountMapper {
         accountDTO.address( account.getAddress() );
         accountDTO.avatarUrl( account.getAvatarUrl() );
         accountDTO.dateOfBirth( account.getDateOfBirth() );
-
         accountDTO.totalQuantity(totalQuantity);
-
         return accountDTO.build();
     }
-    default Account toAccount(AccountRegisterDTO accountRegisterDTO, String password){
-        Account account = new Account();
-        account.setFullName(accountRegisterDTO.getFullName());
-        account.setUserName(accountRegisterDTO.getUserName());
-        account.setPassword(password);
-        account.setRole(false);
-        account.setGender(null);
-        return account;
-    }
+
     default List<AccountDTO> toDTOList(Page<Account> accounts){
         return accounts
                 .stream()
@@ -108,7 +97,6 @@ public interface AccountMapper {
         accountRegisterDTO.setFullName(body.path("names").path(0).path("displayName").asText(null));
         accountRegisterDTO.setAvatarUrl(body.path("photos").path(0).path("url").asText(null));
         accountRegisterDTO.setGender(gender);
-
         return accountRegisterDTO;
     }
 }

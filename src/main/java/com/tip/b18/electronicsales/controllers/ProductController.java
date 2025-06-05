@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
 
 @RestController
@@ -31,11 +30,13 @@ public class ProductController {
                                                             @RequestParam(name = "categoryId", defaultValue = "") UUID categoryId,
                                                             @RequestParam(name = "brandId", defaultValue = "") UUID brandId,
                                                             @Parameter(description = "Chọn kiểu sắp xếp", schema = @Schema(allowableValues = {"newest", "bestseller", "priceAsc", "priceDesc", "priceDiscountAsc", "priceDiscountDesc"}))
-                                                            @RequestParam(name = "orderBy", defaultValue = "") String orderBy){
+                                                            @RequestParam(name = "orderBy", defaultValue = "") String orderBy,
+                                                            @RequestParam(name = "startDay", required = false) String startDay,
+                                                            @RequestParam(name = "endDay", required = false) String endDay,
+                                                            @RequestParam(name = "star", defaultValue = "") String star){
         ResponseDTO<CustomPage<ProductDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
-        responseDTO.setData(productService.viewProducts(search, page, limit, categoryId, brandId, orderBy));
-
+        responseDTO.setData(productService.viewProducts(search, page, limit, categoryId, brandId, orderBy, startDay, endDay, star));
         return responseDTO;
     }
 
@@ -44,7 +45,6 @@ public class ProductController {
         ResponseDTO<ProductDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(productService.viewProductDetails(id));
-
         return responseDTO;
     }
 
@@ -52,11 +52,9 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ResponseDTO<?>> addProduct(@RequestBody @Valid ProductDTO productDTO){
         productService.addProduct(productDTO);
-
         ResponseDTO<ProductDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_ADD);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
@@ -64,11 +62,9 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseDTO<?> deleteProduct(@RequestParam @Valid UUID id){
         productService.deleteProduct(id);
-
         ResponseDTO<ProductDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);
-
         return responseDTO;
     }
 
@@ -76,11 +72,28 @@ public class ProductController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseDTO<?> updateProduct(@RequestParam("id") @Valid UUID id, @RequestBody @Valid ProductDTO productDTO){
         productService.updateProduct(id, productDTO);
-
         ResponseDTO<ProductDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
+        return responseDTO;
+    }
 
+    @GetMapping("/deleted")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseDTO<CustomPage<ProductDTO>> viewProductsAreDeleted(){
+        ResponseDTO<CustomPage<ProductDTO>> responseDTO = new ResponseDTO<>();
+        responseDTO.setStatus("success");
+        responseDTO.setData(productService.viewProductsAreDeleted());
+        return responseDTO;
+    }
+
+    @PutMapping("/restore")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseDTO<?> restoreProduct(@RequestParam @Valid UUID id){
+        productService.restoreProduct(id);
+        ResponseDTO<CustomPage<ProductDTO>> responseDTO = new ResponseDTO<>();
+        responseDTO.setStatus("success");
+        responseDTO.setMessage(MessageConstant.SUCCESS_RESTORE);
         return responseDTO;
     }
 }

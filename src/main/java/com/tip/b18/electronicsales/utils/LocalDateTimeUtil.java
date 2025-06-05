@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeUtil {
+    private LocalDateTimeUtil(){}
 
     private static DateTimeFormatter formatter(){
         return DateTimeFormatter.ofPattern("yyyy-M-d");

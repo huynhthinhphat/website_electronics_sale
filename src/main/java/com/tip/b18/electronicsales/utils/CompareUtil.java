@@ -1,6 +1,8 @@
 package com.tip.b18.electronicsales.utils;
 
 public class CompareUtil {
+    private CompareUtil(){}
+
     public static boolean compare(Object objectFirst, Object objectSecond){
         return objectFirst == null || objectFirst.equals(objectSecond);
     }

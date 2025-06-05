@@ -24,17 +24,22 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
             "WHERE (o.orderCode LIKE CONCAT('%', :search, '%') OR o.account.phoneNumber LIKE CONCAT('%', :search, '%')) " +
             "AND (:accountId IS NULL OR o.account.id = :accountId)" +
             "AND (:status IS NULL OR o.status = :status) " +
+            "AND (:notStatus IS NULL OR o.status <> :notStatus) " +
             "AND (:paymentMethod IS NULL OR o.paymentMethod = :paymentMethod) " +
             "AND (:delivery IS NULL OR o.delivery = :delivery) " +
+            "AND o.createdAt >= :startDay " +
+            "AND o.createdAt <= :endDay " +
             "ORDER BY o.createdAt DESC")
     Page<Order> findAllByConditions(
             @Param("search") String search,
             @Param("accountId") UUID accountId,
             @Param("status") Status status,
+            @Param("notStatus") Status notStatus,
             @Param("paymentMethod") PaymentMethod paymentMethod,
             @Param("delivery") Delivery delivery,
+            @Param("startDay") LocalDateTime startDay,
+            @Param("endDay") LocalDateTime endDay,
             Pageable pageable);
-
     Optional<Order> findByIdAndAccountId(UUID id, UUID accountId);
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt > :startDay AND o.createdAt < :endDay AND o.status <> :status")
     int countQuantityNewOrders(LocalDateTime startDay, LocalDateTime endDay, Status status);
@@ -60,4 +65,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
     Order findByOrderCodeAndStatus(String orderCode, Status status);
     @Query("SELECT o FROM Order o WHERE o.status = :status")
     List<Order> findByStatus(@Param("status") Status status);
+    @Query("SELECT o FROM Order o WHERE o.status = :status AND (o.toEstimateDate >= :startDay AND o.toEstimateDate <= :endDay)")
+    List<Order> findByStatusAndDate(@Param("status") Status status, @Param("startDay") LocalDateTime startDay, @Param("endDay") LocalDateTime endDay);
 }

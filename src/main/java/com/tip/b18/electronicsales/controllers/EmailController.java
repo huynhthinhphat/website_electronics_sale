@@ -18,22 +18,18 @@ public class EmailController {
     @PostMapping
     public ResponseDTO<String> sentMail(@RequestParam String userName){
         emailService.sendMail(userName);
-
         ResponseDTO<String> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_SEND_EMAIL);
-
         return responseDTO;
     }
 
     @PostMapping("/verify")
     public ResponseDTO<String> verifyOTP(@RequestParam String userName, @RequestParam String OTP){
         emailService.verifyOTP(userName, OTP);
-
         ResponseDTO<String> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.VALID_OTP);
-
         return responseDTO;
     }
 }

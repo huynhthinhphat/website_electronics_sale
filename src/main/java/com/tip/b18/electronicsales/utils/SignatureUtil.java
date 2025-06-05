@@ -7,6 +7,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 public class SignatureUtil {
+    private SignatureUtil(){}
+
     public static String generateHmacSHA256(String dataStr, String key)
             throws NoSuchAlgorithmException, InvalidKeyException {
         Mac sha256Hmac = Mac.getInstance("HmacSHA256");

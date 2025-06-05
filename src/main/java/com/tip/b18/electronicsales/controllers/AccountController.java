@@ -23,11 +23,9 @@ public class AccountController {
                                                              @RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                                              @RequestParam(name = "limit", required = false, defaultValue = "5") int limit){
         CustomPage<AccountDTO> accounts = accountService.viewAccounts(search, page, limit);
-
         ResponseDTO<CustomPage<AccountDTO>> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(accounts);
-
         return responseDTO;
     }
 
@@ -35,11 +33,9 @@ public class AccountController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public ResponseDTO<AccountDTO> viewPersonalAccount(@RequestParam(name = "id", required = false) @Valid UUID id){
         AccountDTO accountDTO = accountService.viewPersonalAccount(id);
-
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setData(accountDTO);
-
         return responseDTO;
     }
 
@@ -47,12 +43,10 @@ public class AccountController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseDTO<AccountDTO> updatePersonalAccount(@RequestBody @Valid AccountDTO accountDTO){
         AccountDTO account = accountService.updatePersonalAccount(accountDTO);
-
         ResponseDTO<AccountDTO> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_UPDATE);
         responseDTO.setData(account);
-
         return responseDTO;
     }
 
@@ -60,11 +54,9 @@ public class AccountController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseDTO<?> deleteAccount(@RequestParam(name = "id") @Valid UUID id){
         accountService.deleteAccount(id);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_DELETE);
-
         return responseDTO;
     }
 
@@ -72,11 +64,9 @@ public class AccountController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public ResponseDTO<?> changePasswordAccount(@RequestBody @Valid UpdatePasswordDTO updatePasswordDTO){
         accountService.changePassword(updatePasswordDTO);
-
         ResponseDTO<?> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_CHANGE);
-
         return responseDTO;
     }
 }

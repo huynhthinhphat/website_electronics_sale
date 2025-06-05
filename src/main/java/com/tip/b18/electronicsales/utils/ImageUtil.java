@@ -1,6 +1,8 @@
 package com.tip.b18.electronicsales.utils;
 
 public class ImageUtil {
+    private ImageUtil(){}
+
     public static String getPublicIdFromUrl(String url) {
         if (url == null || url.isEmpty()) {
             return null;

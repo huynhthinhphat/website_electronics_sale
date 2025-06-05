@@ -26,4 +26,16 @@ public interface ProductMapper {
         product.setWarranty(productDTO.getWarranty());
         return product;
     }
+
+    default ProductDTO toProductDTO(Product product){
+        return ProductDTO.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .deletedAt(product.getDeletedAt())
+                .build();
+    }
+
+    default List<ProductDTO> toProductDTOS(Page<Product> products) {
+        return products.map(this::toProductDTO).getContent();
+    }
 }

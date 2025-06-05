@@ -28,6 +28,7 @@ public interface OrderDetailMapper {
                         builder
                                 .id(orderDetail.getProduct().getId())
                                 .orderId(orderDetail.getOrder().getId())
+                                .orderDetailId(orderDetail.getId())
                                 .mainImageUrl(orderDetail.getProduct().getMainImageUrl());
                     }
                     return builder.build();
@@ -43,7 +44,6 @@ public interface OrderDetailMapper {
         orderDetail.setPriceAtTime(orderDetailDTO.getPriceAtTime());
         orderDetail.setTotalPrice(orderDetailDTO.getTotalPrice());
         orderDetail.setProduct(product);
-
         return orderDetail;
     }
 

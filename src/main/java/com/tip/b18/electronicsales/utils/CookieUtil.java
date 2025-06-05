@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class CookieUtil {
+    private CookieUtil(){}
+
     public static void addJwtToCookie(HttpServletResponse response, String token){
         Cookie cookie = new Cookie("jwt", token);
         cookie.setHttpOnly(true);

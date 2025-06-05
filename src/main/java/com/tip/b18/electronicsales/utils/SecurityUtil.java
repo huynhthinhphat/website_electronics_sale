@@ -9,12 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.UUID;
 
 public class SecurityUtil {
+    private SecurityUtil(){}
+
     public static UUID getAuthenticatedUserId(UUID idRequest){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.getAuthorities() != null){
             String id = authentication.getPrincipal().toString();
             String role = authentication.getAuthorities().iterator().next().getAuthority();
-
             if ("ROLE_USER".equals(role)) {
                 return UUID.fromString(id);
             } else {
@@ -31,7 +32,6 @@ public class SecurityUtil {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.getAuthorities() != null){
             String id = authentication.getPrincipal().toString();
-
             return UUID.fromString(id);
         }
         throw new CredentialsException(MessageConstant.ERROR_INVALID_ACCESS_TOKEN);
@@ -41,7 +41,6 @@ public class SecurityUtil {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication != null && authentication.getAuthorities() != null){
             String role = authentication.getAuthorities().iterator().next().getAuthority();
-
             return "ROLE_ADMIN".equals(role);
         }
         return false;

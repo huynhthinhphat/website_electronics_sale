@@ -1,8 +1,11 @@
 package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
+import com.tip.b18.electronicsales.dto.ColorDTO;
+import com.tip.b18.electronicsales.dto.CustomList;
 import com.tip.b18.electronicsales.entities.Color;
 import com.tip.b18.electronicsales.exceptions.NotFoundException;
+import com.tip.b18.electronicsales.mappers.ColorMapper;
 import com.tip.b18.electronicsales.repositories.ColorRepository;
 import com.tip.b18.electronicsales.services.ColorService;
 import jakarta.transaction.Transactional;
@@ -16,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ColorServiceImpl implements ColorService {
     private final ColorRepository colorRepository;
+    private final ColorMapper colorMapper;
 
     @Override
     public List<Color> addNewColor(List<String> colors) {
@@ -47,5 +51,16 @@ public class ColorServiceImpl implements ColorService {
             throw new NotFoundException(String.format(MessageConstant.ERROR_NOT_FOUND_COLOR, colorName));
         }
         return color;
+    }
+
+    @Override
+    public List<String> findAll() {
+        return colorMapper.toColorDTOS(colorRepository.findAll());
+    }
+
+    @Override
+    @Transactional
+    public void deleteUnusedColors() {
+        colorRepository.deleteUnusedColors();
     }
 }

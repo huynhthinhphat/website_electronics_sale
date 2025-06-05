@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +28,17 @@ public class StatisticServiceImpl implements StatisticService {
     public DailySummaryDTO getDailySummary() {
         LocalDateTime startDay = LocalDate.now().atStartOfDay();
         LocalDateTime endDay = LocalDate.now().atTime(LocalTime.MAX);
-
-        int totalQuantityNewProducts = productService.getQuantityNewProducts(startDay, endDay);
-        int totalQuantityNewOrders = orderService.getQuantityNewOrders(startDay, endDay);
-        int totalQuantityNewCustomers = accountService.getQuantityNewCustomers(startDay, endDay);
-
-        return new DailySummaryDTO(totalQuantityNewProducts, totalQuantityNewOrders , totalQuantityNewCustomers);
+        CompletableFuture<Integer> productFuture = CompletableFuture.supplyAsync(() ->
+                productService.getQuantityNewProducts(startDay, endDay));
+        CompletableFuture<Integer> orderFuture = CompletableFuture.supplyAsync(() ->
+                orderService.getQuantityNewOrders(startDay, endDay));
+        CompletableFuture<Integer> accountFuture = CompletableFuture.supplyAsync(() ->
+                accountService.getQuantityNewCustomers(startDay, endDay));
+        try{
+            return new DailySummaryDTO(productFuture.get(), orderFuture.get() , accountFuture.get());
+        }catch (Exception e){
+            return new DailySummaryDTO(0, 0 , 0);
+        }
     }
 
     @Override

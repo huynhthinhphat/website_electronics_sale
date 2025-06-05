@@ -11,8 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, UUID> {
-    @Query("SELECT b FROM Brand b WHERE b.name LIKE CONCAT('%', :search, '%')")
+    @Query("SELECT b FROM Brand b WHERE b.name LIKE CONCAT('%', :search, '%') ORDER BY b.createdAt DESC")
     Page<Brand> findByBrandName(@Param("search") String search, Pageable pageable);
-
     boolean existsByName(String name);
 }

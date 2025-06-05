@@ -69,7 +69,6 @@ public interface OrderMapper {
         List<OrderDetailDTO> orderDetails = detailDTOList.stream()
                 .peek(orderDetail -> orderDetail.setOrderId(null))
                 .toList();
-
         OrderDTO.OrderDTOBuilder builder = OrderDTO.builder()
                 .id(order.getId())
                 .orderCode(order.getOrderCode())
@@ -80,7 +79,6 @@ public interface OrderMapper {
                 .delivery(order.getDelivery())
                 .totalPrice(order.getTotalPrice())
                 .items(orderDetails);
-
         if(!SecurityUtil.isAdminRole()){
             builder.fullName(order.getFullName());
         }
@@ -101,15 +99,12 @@ public interface OrderMapper {
         order.setNote(orderDTO.getNote());
         order.setFromEstimateDate(orderDTO.getFromEstimateDate());
         order.setToEstimateDate(orderDTO.getToEstimateDate());
-
         if(status.equals(Status.PENDING) || status.equals(Status.WAITING_FOR_PAYMENT)){
             order.setStatus(status);
         }
-
         if(orderDTO.getPaymentMethod().equals(PaymentMethod.MOMO)){
             order.setPaymentDeadline(LocalDateTime.now().plusMinutes(10));
         }
-
         return order;
     }
 }

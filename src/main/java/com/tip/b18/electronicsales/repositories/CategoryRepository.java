@@ -12,8 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    @Query("SELECT c FROM Category c WHERE c.name LIKE CONCAT('%', :search, '%')")
+    @Query("SELECT c FROM Category c WHERE c.name LIKE CONCAT('%', :search, '%') ORDER BY c.createdAt DESC")
     Page<Category> findByCategoryName(@Param("search") String search, Pageable pageable);
-
     boolean existsByName(String name);
 }

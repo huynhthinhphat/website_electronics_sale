@@ -1,6 +1,16 @@
 package com.tip.b18.electronicsales.dto;
 
-import com.tip.b18.electronicsales.dto.base.BaseCategoryDTO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Builder;
+import lombok.Data;
 
-public class CategoryDTO extends BaseCategoryDTO {
+import java.util.UUID;
+
+@Builder
+@Data
+public class CategoryDTO{
+    private UUID id;
+    private String name;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String description;
 }

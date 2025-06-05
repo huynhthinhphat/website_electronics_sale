@@ -12,6 +12,7 @@ import java.util.UUID;
 public class OrderDetailDTO {
     private UUID id;
     private UUID orderId;
+    private UUID orderDetailId;
     private String sku;
     private String name;
     private int quantity;

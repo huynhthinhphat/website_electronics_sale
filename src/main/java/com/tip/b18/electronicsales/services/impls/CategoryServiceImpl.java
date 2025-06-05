@@ -1,7 +1,6 @@
 package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
-import com.tip.b18.electronicsales.dto.CategoriesDTO;
 import com.tip.b18.electronicsales.dto.CategoryDTO;
 import com.tip.b18.electronicsales.dto.CustomPage;
 import com.tip.b18.electronicsales.dto.PageInfoDTO;
@@ -28,8 +27,8 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
-    public CustomPage<CategoriesDTO> viewCategories(String search, int page, int limit) {
-        CustomPage<CategoriesDTO> categoriesDTO = new CustomPage<>();;
+    public CustomPage<CategoryDTO> viewCategories(String search, int page, int limit) {
+        CustomPage<CategoryDTO> categoriesDTO = new CustomPage<>();;
         Pageable pageable = Pageable.unpaged();
         Page<Category> categories;
 
@@ -55,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void addCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO addCategory(CategoryDTO categoryDTO) {
         if(categoryRepository.existsByName(categoryDTO.getName())){
             throw new AlreadyExistsException(MessageConstant.ERROR_CATEGORY_NAME_EXISTS);
         }
@@ -64,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setName(categoryDTO.getName());
         category.setDescription(categoryDTO.getDescription());
 
-        categoryRepository.save(category);
+        return categoryMapper.toCategoryDTO(categoryRepository.save(category));
     }
 
     @Override

@@ -50,6 +50,7 @@ public interface OrderMapper {
                             .paymentMethod(order.getPaymentMethod())
                             .delivery(order.getDelivery())
                             .items(orderDetails)
+                            .createdAt(order.getCreatedAt())
                             .build();
                 }).collect(Collectors.toList());
     }
@@ -78,7 +79,8 @@ public interface OrderMapper {
                 .paymentMethod(order.getPaymentMethod())
                 .delivery(order.getDelivery())
                 .totalPrice(order.getTotalPrice())
-                .items(orderDetails);
+                .items(orderDetails)
+                .createdAt(order.getCreatedAt());
         if(!SecurityUtil.isAdminRole()){
             builder.fullName(order.getFullName());
         }

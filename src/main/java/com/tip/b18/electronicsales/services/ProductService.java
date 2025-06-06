@@ -28,5 +28,4 @@ public interface ProductService {
     CustomPage<ProductDTO> viewProductsAreDeleted();
     void restoreProduct(UUID id);
     void deleteProductsPermanently();
-    Page<ProductDTO> findAllByConditions(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy, String startDate, String endDate, String star);
 }

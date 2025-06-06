@@ -37,4 +37,5 @@ public class OrderDTO {
     private LocalDateTime fromEstimateDate;
     private LocalDateTime toEstimateDate;
     private List<OrderDetailDTO> items;
+    private LocalDateTime createdAt;
 }

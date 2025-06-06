@@ -11,12 +11,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class WebhookController {
     private final OrderService orderService;
-    private final SseService sseService;
-
-    @GetMapping("/subscribe")
-    public SseEmitter subscribe(@RequestParam String orderCode) {
-        return sseService.subscribe(orderCode);
-    }
 
     @PostMapping("/payment-success")
     public void handlePaymentWebhook(@RequestBody Map<String, Object> payload) {

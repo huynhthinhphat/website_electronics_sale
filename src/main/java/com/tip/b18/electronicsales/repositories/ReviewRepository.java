@@ -19,7 +19,8 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
             "FROM Review r " +
             "WHERE (:search IS NULL OR :search = '' OR LOWER(r.account.fullName) LIKE LOWER(CONCAT('%', :search, '%')) " +
             "OR r.account.phoneNumber LIKE CONCAT('%', :search, '%') " +
-            "OR LOWER(r.product.name) LIKE LOWER(CONCAT('%', :search, '%'))) " +
+            "OR LOWER(r.product.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+            "OR LOWER(r.product.sku) LIKE LOWER(CONCAT('%', :search, '%'))) " +
             "AND (r.star >= :minStar AND r.star <= :maxStar) " +
             "ORDER BY r.createdAt DESC")
     Page<Review> findAllByConditions(@Param("search") String search, @Param("minStar") Integer minStar, @Param("maxStar") Integer maxStar, Pageable pageable);

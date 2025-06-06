@@ -56,10 +56,7 @@ public class PayOSServiceImpl implements PayOSService {
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 HttpEntity<Map<String, Object>> entity = getMapHttpEntity(Long.parseLong(orderCode), amount, description, orderDTO.getItems(), data, returnUrl, cancelUrl, headers);
 
-                // Gọi API PayOS tạo thanh toán
-                // Lấy URL thanh toán từ response
                 return restTemplate.postForEntity("https://api-merchant.payos.vn/v2/payment-requests", entity, Map.class);
-
             }catch (Exception e){
                 throw new PayOSException(MessageConstant.ERROR_PAYOS);
             }
@@ -77,8 +74,7 @@ public class PayOSServiceImpl implements PayOSService {
         payload.put("returnUrl", returnUrl);
         payload.put("cancelUrl", cancelUrl);
         payload.put("expiredAt", LocalDateTime.now().plusMinutes(10).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
-        payload.put("webhookUrl", "https://2f70-2405-4802-6071-8720-1d40-6272-b9e0-aeeb.ngrok-free.app/api/webhook/payment-success");
-
+        payload.put("webhookUrl", "https://91d3-2405-4802-b27c-7260-a0f4-f25a-5631-aac0.ngrok-free.app/api/webhook/payment-success");
         return new HttpEntity<>(payload, headers);
     }
 }

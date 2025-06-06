@@ -350,9 +350,4 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteAll(productList);
         colorService.deleteUnusedColors();
     }
-
-    @Override
-    public Page<ProductDTO> findAllByConditions(String search, int page, int limit, UUID categoryId, UUID brandId, String orderBy, String startDate, String endDate, String star) {
-        return productCriteria.searchProductsByConditions(search, page, limit, categoryId, brandId, orderBy, LocalDateTimeUtil.parseStartDay(startDate), LocalDateTimeUtil.parseEndDay(endDate), star);
-    }
 }

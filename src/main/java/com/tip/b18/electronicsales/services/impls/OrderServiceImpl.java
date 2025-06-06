@@ -162,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order orderUpdate = orderRepository.save(order);
-        if(!orderUpdate.getStatus().equals(Status.CANCELED)){
+        if(!orderUpdate.getStatus().equals(Status.CANCELED) && !orderUpdate.getStatus().equals(Status.REFUNDED)){
             return;
         }
         UUID orderId = orderUpdate.getId();
@@ -201,6 +201,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void updateStatusOrder(Map<String, Object> payload) {
         if (payload == null) {
             throw new PayOSException(MessageConstant.INVALID_PAYLOAD);

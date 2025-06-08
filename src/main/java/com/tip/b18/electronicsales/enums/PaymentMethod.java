@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum PaymentMethod {
-    COD("Cash on Delivery"),
-    MOMO("MoMo E-Wallet"),
+    COD("Thanh toán khi nhận hàng"),
+    MOMO("Thanh toán trực tuyến"),
     ZALOPAY("ZaloPay E-Wallet");
 
     private final String displayName;

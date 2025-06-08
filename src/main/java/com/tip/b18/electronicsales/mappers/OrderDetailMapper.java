@@ -6,6 +6,8 @@ import com.tip.b18.electronicsales.entities.OrderDetail;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.utils.SecurityUtil;
 import org.mapstruct.Mapper;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,8 +55,11 @@ public interface OrderDetailMapper {
                 .map(orderDetail -> OrderDetailDTO
                         .builder()
                         .id(orderDetail.getId())
+                        .sku(orderDetail.getProduct().getSku())
                         .name(orderDetail.getProduct().getName())
                         .quantity(orderDetail.getQuantity())
+                        .price(orderDetail.getProduct().getDiscountPrice())
+                        .totalPrice(orderDetail.getProduct().getDiscountPrice().multiply(new BigDecimal(orderDetail.getQuantity())))
                         .mainImageUrl(orderDetail.getProduct().getMainImageUrl())
                         .color(orderDetail.getColor())
                         .build())

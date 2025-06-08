@@ -36,4 +36,5 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             "(SELECT COUNT(od) FROM OrderDetail od WHERE p.id = od.product.id) AS quantity " +
             "FROM Product p WHERE (p.deletedAt >= :startDay AND p.createdAt <= :endDay) AND p.isDeleted = true")
     List<Tuple> findAllByIsDeleted(@Param("startDay") LocalDateTime startDay,@Param("endDay") LocalDateTime endDay);
+    List<Product> findAllByIsDeletedFalseAndSkuEqualsOrSkuStartingWith(String sku, String skuPrefix);
 }

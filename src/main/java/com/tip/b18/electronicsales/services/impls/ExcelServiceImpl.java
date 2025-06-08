@@ -44,13 +44,14 @@ public class ExcelServiceImpl implements ExcelService {
         header.createCell(0).setCellValue("STT");
         header.createCell(1).setCellValue("Mã sản phẩm");
         header.createCell(2).setCellValue("Tên");
-        header.createCell(3).setCellValue("Số lượng");
+        header.createCell(3).setCellValue("Tồn kho");
         header.createCell(4).setCellValue("Giá gốc");
         header.createCell(5).setCellValue("Giá giảm");
         header.createCell(6).setCellValue("% giảm");
         header.createCell(7).setCellValue("Số lượng đã bán");
-        header.createCell(8).setCellValue("Ngày tạo");
-        header.createCell(9).setCellValue("Ngày cập nhật gần nhất");
+        header.createCell(8).setCellValue("Số sao");
+        header.createCell(9).setCellValue("Ngày tạo");
+        header.createCell(10).setCellValue("Ngày cập nhật gần nhất");
 
         int rowNum = 1;
         for(ProductDTO product : products){
@@ -63,8 +64,9 @@ public class ExcelServiceImpl implements ExcelService {
             row.createCell(5).setCellValue(Double.parseDouble(product.getDiscountPrice().toString()));
             row.createCell(6).setCellValue(Double.parseDouble(product.getDiscount().toString()));
             row.createCell(7).setCellValue(product.getQuantitySold());
-            row.createCell(8).setCellValue(product.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy")));
-            row.createCell(9).setCellValue(product.getUpdatedAt().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy")));
+            row.createCell(8).setCellValue(product.getStar());
+            row.createCell(9).setCellValue(product.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy")));
+            row.createCell(10).setCellValue(product.getUpdatedAt().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy")));
         }
 
         ServletOutputStream outputStream = response.getOutputStream();

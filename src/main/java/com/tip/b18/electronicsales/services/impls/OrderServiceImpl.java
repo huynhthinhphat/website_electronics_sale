@@ -2,9 +2,9 @@ package com.tip.b18.electronicsales.services.impls;
 
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.*;
+import com.tip.b18.electronicsales.entities.Account;
 import com.tip.b18.electronicsales.entities.Cart;
 import com.tip.b18.electronicsales.entities.Order;
-import com.tip.b18.electronicsales.entities.OrderDetail;
 import com.tip.b18.electronicsales.entities.Product;
 import com.tip.b18.electronicsales.enums.Delivery;
 import com.tip.b18.electronicsales.enums.PaymentMethod;
@@ -43,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final CartService cartService;
     private final CartItemService cartItemService;
+    private final EmailService emailService;
 
     @Override
     public CustomPage<OrderDTO> viewOrders(String search, int page, int limit, Status status, PaymentMethod paymentMethod, Delivery delivery, String startDay, String endDay) {
@@ -111,6 +112,14 @@ public class OrderServiceImpl implements OrderService {
             List<UUID> cartItemIds = cartItemService.getCartItemsToDelete(cart, orderDTO.getItems());
             cartItemService.deleteItemsInCart(cartItemIds);
             cartService.updateTotalPriceAndTotalQuantityOfCart(cart);
+        }
+
+        Account account = accountService.findById(accountId);
+        if(account != null){
+            String email = account.getEmail();
+            if(email != null && !email.isBlank()){
+                emailService.sendBill(account.getFullName(), account.getEmail(), order, orderDetailDTOList);
+            }
         }
         return orderMapper.createOrderResponse(order, orderDetailDTOList, cartService.getTotalQuantityItemInCartByAccountId(accountId));
     }
@@ -224,9 +233,17 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = orderRepository.findByOrderCodeAndStatus(String.valueOf(orderCode), Status.WAITING_FOR_PAYMENT);
-        if(order != null){
-            order.setStatus(Status.PENDING);
-            orderRepository.save(order);
+        if(order == null){
+            throw new NotFoundException(MessageConstant.INVALID_ORDER_DETAIL);
+        }
+
+        order.setStatus(Status.PENDING);
+        Order orderUpdate = orderRepository.save(order);
+
+        Account account = orderUpdate.getAccount();
+        String email = account.getEmail();
+        if(email != null && !email.isBlank()){
+            emailService.sendBill(account.getFullName(), account.getEmail(), order, orderDetailService.findAllByOrderId(orderUpdate.getId()));
         }
     }
 

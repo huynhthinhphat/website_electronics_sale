@@ -39,10 +39,12 @@ public class MessageConstant {
     public static final String ERROR_INSUFFICIENT_STOCK = "Số lượng hàng tồn kho của sản phẩm %s không đủ";
     public static final String ERROR_UPDATE_ORDER = "Không thể cập nhật đơn hàng! Đơn hàng %s";
     public static final String ERROR_NOT_FOUND_EMAIL_FROM_SERVER = "Goolge không tìm thấy gmail!";
-    public static final String ERROR_NO_GMAIL_LINKED = "Tài khoản của bạn không có gmail liên kết";
+    public static final String ERROR_NO_GMAIL_LINKED = "Tài khoản không liên kết gmail!!!";
     public static final String ERROR_NOT_FOUND_USERNAME_FROM_CLIENT = "Không tìm thấy tài khoản đã lưu tại client!";
     public static final String ERROR_INVALID_OTP = "Mã OTP không hợp lệ";
+    public static final String ERROR_SENT_OTP = "Lỗi gửi mã OTP";
     public static final String TITLE_FORGOT_PASSWORD = "Quên mật khẩu";
+    public static final String TITLE_ORDER = "Xác nhận đơn hàng %s thành công";
     public static final String MISSING_ORDER_CODE = "Không tìm thấy mã hóa đơn trong dữ liệu";
     public static final String VALID_OTP = "Mã OTP hợp lệ";
     public static final String INVALID_REVIEW = "Bình luận không tồn tại";

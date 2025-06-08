@@ -3,7 +3,6 @@ package com.tip.b18.electronicsales.services.impls;
 import com.tip.b18.electronicsales.constants.MessageConstant;
 import com.tip.b18.electronicsales.dto.*;
 import com.tip.b18.electronicsales.entities.*;
-import com.tip.b18.electronicsales.entities.base.BaseIdEntity;
 import com.tip.b18.electronicsales.exceptions.AlreadyExistsException;
 import com.tip.b18.electronicsales.exceptions.CloudinaryDeleteException;
 import com.tip.b18.electronicsales.exceptions.InsufficientStockException;
@@ -136,6 +135,14 @@ public class ProductServiceImpl implements ProductService {
         if(product == null){
             throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
         }
+        String sku = product.getSku();
+        int end = sku.indexOf("(");
+
+        if(end != -1){
+            sku = sku.substring(0 , end);
+        }
+
+        product.setSku(sku);
         product.setDeleted(true);
         product.setDeletedAt(LocalDateTime.now());
         productRepository.save(product);
@@ -324,6 +331,22 @@ public class ProductServiceImpl implements ProductService {
             throw new NotFoundException(MessageConstant.ERROR_NOT_FOUND_PRODUCT);
         }
 
+        String originalSku = product.getSku();
+        String baseSku = originalSku.contains("(") ? originalSku.substring(0, originalSku.indexOf("(")) : originalSku;
+
+        List<Product> products = productRepository.findAllByIsDeletedFalseAndSkuEqualsOrSkuStartingWith(baseSku, baseSku + "(");
+        Set<String> existingSkus = products.stream()
+                .map(Product::getSku)
+                .collect(Collectors.toSet());
+
+        String newSku = baseSku;
+        int counter = 1;
+        while (existingSkus.contains(newSku)) {
+            newSku = baseSku + "(" + counter + ")";
+            counter++;
+        }
+
+        product.setSku(newSku);
         product.setDeleted(false);
         product.setDeletedAt(null);
         productRepository.save(product);

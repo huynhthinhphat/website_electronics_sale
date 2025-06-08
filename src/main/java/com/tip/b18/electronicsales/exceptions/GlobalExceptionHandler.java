@@ -59,7 +59,8 @@ public class GlobalExceptionHandler {
             MissingServletRequestParameterException.class,
             MethodArgumentTypeMismatchException.class,
             CloudinaryDeleteException.class,
-            PayOSException.class})
+            PayOSException.class,
+            MailException.class})
     public ResponseEntity<ResponseDTO<?>> handleBadRequest(Exception e) {
         String message = null;
         if (e instanceof MethodArgumentNotValidException) {

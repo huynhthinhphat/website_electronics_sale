@@ -16,8 +16,8 @@ public class EmailController {
     private final EmailService emailService;
 
     @PostMapping
-    public ResponseDTO<String> sentMail(@RequestParam String userName){
-        emailService.sendMail(userName);
+    public ResponseDTO<String> sendOTP(@RequestParam String userName){
+        emailService.sendOTP(userName);
         ResponseDTO<String> responseDTO = new ResponseDTO<>();
         responseDTO.setStatus("success");
         responseDTO.setMessage(MessageConstant.SUCCESS_SEND_EMAIL);

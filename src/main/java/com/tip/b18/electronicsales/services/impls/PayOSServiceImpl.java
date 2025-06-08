@@ -74,7 +74,7 @@ public class PayOSServiceImpl implements PayOSService {
         payload.put("returnUrl", returnUrl);
         payload.put("cancelUrl", cancelUrl);
         payload.put("expiredAt", LocalDateTime.now().plusMinutes(10).atZone(ZoneId.systemDefault()).toInstant().getEpochSecond());
-        payload.put("webhookUrl", "https://website-electronics-sale.onrender.com/api/categories/api/webhook/payment-success");
+        payload.put("webhookUrl", "https://763d-2405-4802-b27c-7260-3c94-f181-eb52-a06a.ngrok-free.app/api/webhook/payment-success");
         return new HttpEntity<>(payload, headers);
     }
 }

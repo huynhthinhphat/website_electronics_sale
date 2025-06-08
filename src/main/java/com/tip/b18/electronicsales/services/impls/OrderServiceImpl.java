@@ -114,11 +114,13 @@ public class OrderServiceImpl implements OrderService {
             cartService.updateTotalPriceAndTotalQuantityOfCart(cart);
         }
 
-        Account account = accountService.findById(accountId);
-        if(account != null){
-            String email = account.getEmail();
-            if(email != null && !email.isBlank()){
-                emailService.sendBill(account.getFullName(), account.getEmail(), order, orderDetailDTOList);
+        if(order.getPaymentMethod().equals(PaymentMethod.COD)){
+            Account account = accountService.findById(accountId);
+            if(account != null){
+                String email = account.getEmail();
+                if(email != null && !email.isBlank()){
+                    emailService.sendBill(account.getFullName(), account.getEmail(), order, orderDetailDTOList);
+                }
             }
         }
         return orderMapper.createOrderResponse(order, orderDetailDTOList, cartService.getTotalQuantityItemInCartByAccountId(accountId));

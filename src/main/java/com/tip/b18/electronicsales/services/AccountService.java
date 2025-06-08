@@ -19,4 +19,5 @@ public interface AccountService {
     int getQuantityNewCustomers(LocalDateTime startDay, LocalDateTime endDay);
     Account findByEmail(String email);
     Account findByUserName(String userName);
+    AccountDTO getRoleAndTotalQuantityItemInCart();
 }

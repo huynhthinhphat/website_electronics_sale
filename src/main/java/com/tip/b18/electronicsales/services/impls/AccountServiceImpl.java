@@ -214,4 +214,12 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByUserName(userName)
                 .orElseThrow(() -> new NotFoundException(MessageConstant.ERROR_NOT_FOUND_ACCOUNT));
     }
+
+    @Override
+    public AccountDTO getRoleAndTotalQuantityItemInCart() {
+        AccountDTO accountDTO = new AccountDTO();
+        accountDTO.setRole(SecurityUtil.isAdminRole());
+        accountDTO.setTotalQuantity(cartService.getTotalQuantityItemInCartByAccountId(SecurityUtil.getAuthenticatedUserId()));
+        return accountDTO;
+    }
 }

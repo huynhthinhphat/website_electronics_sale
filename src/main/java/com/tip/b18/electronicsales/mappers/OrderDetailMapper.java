@@ -23,6 +23,7 @@ public interface OrderDetailMapper {
                             .name(orderDetail.getProduct().getName())
                             .quantity(orderDetail.getQuantity())
                             .priceAtTime(orderDetail.getPriceAtTime())
+                            .price(orderDetail.getPriceAtTime())
                             .totalPrice(orderDetail.getTotalPrice())
                             .color(orderDetail.getColor());
 

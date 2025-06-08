@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     @GetMapping
-    public ResponseEntity<?> checkRole(){
-        return ResponseEntity.ok(SecurityUtil.isAdminRole());
+    public ResponseEntity<AccountDTO> checkRole(){
+        return ResponseEntity.ok(accountService.getRoleAndTotalQuantityItemInCart());
     }
 }
